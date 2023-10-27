@@ -19,7 +19,8 @@ describe("ProductPurchase", function () {
     const amount = ethers.parseEther("0.0001".toString());
     await productPurchase.connect(buyer).buyProduct(seller.address, ethers.id(key), { value: amount });
 
-    const lockData = await productPurchase.getLockDataByKey(key);
+    const allLockData = await productPurchase.getAllLockData();
+    const lockData = allLockData[0];
     expect(lockData.seller).to.equal(seller.address);
     expect(lockData.buyer).to.equal(buyer.address);
     expect(lockData.locked).to.equal(true);

@@ -29,6 +29,8 @@ contract ProductPurchase {
             true,
             _key
         );
+
+        lockDataMap[_key] = lockdata;
         
         lockDataKeys.push(_key); 
         allLockData.push(lockdata); 
@@ -37,16 +39,13 @@ contract ProductPurchase {
     // Function to unlock the money with the key
     function unlockMoney(bytes32 _key) public {
         LockData storage lockData = lockDataMap[_key];
+        require(owner == msg.sender, "Only the seller can unlock the funds");
         require(lockData.locked, "Funds are not locked");
         payable(lockData.seller).transfer(lockData.amount);
         lockData.amount = 0;
         lockData.locked = false;
     }
 
-    // Function to retrieve all lock data keys
-    function getAllLockDataKeys() public view returns (bytes32[] memory) {
-        return lockDataKeys;
-    }
 
     // Function to retrieve all locked data
     function getAllLockData() public view returns (LockData[] memory) {

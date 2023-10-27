@@ -50,7 +50,7 @@ describe("ProductPurchase", function () {
   });
 
   it("Should retrieve lock data by key", async function () {
-    const lockData = await productPurchase.getLockDataByKey(key);
+    const lockData = await productPurchase.connect(owner).getLockDataByKey(key);
     expect(lockData.seller).to.equal(seller.address);
     expect(lockData.buyer).to.equal(buyer.address);
     expect(lockData.locked).to.equal(true);

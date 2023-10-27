@@ -22,20 +22,21 @@ contract ProductPurchase {
     // Function to buy a product and lock the money
     function buyProduct(address _seller, bytes32 _key) public payable {
         require(msg.value > 0, "Amount sent must be greater than 0");
-        LockData storage lockData = lockDataMap[_key];
-        require(lockData.seller == _seller, "Seller's address does not match");
-        require(!lockData.locked, "Funds are already locked");
-        lockData.amount = msg.value;
-        lockData.buyer = msg.sender;
-        lockData.locked = true;
-        lockDataKeys.push(_key); // Add the key to the array
-        allLockData.push(lockData); // Add the lock data to the array
+        LockData memory lockdata = LockData(
+            msg.value,
+            _seller,
+            msg.sender,
+            true,
+            _key
+        );
+        
+        lockDataKeys.push(_key); 
+        allLockData.push(lockdata); 
     }
 
     // Function to unlock the money with the key
     function unlockMoney(bytes32 _key) public {
         LockData storage lockData = lockDataMap[_key];
-        require(lockData.seller == msg.sender, "Only the seller can unlock the funds");
         require(lockData.locked, "Funds are not locked");
         payable(lockData.seller).transfer(lockData.amount);
         lockData.amount = 0;
